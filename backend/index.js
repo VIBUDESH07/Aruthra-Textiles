@@ -16,6 +16,7 @@ connectDB();
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/materials", require("./routes/MaterialRoutes"));
+app.use("/api/sales",require("./routes/sellRoutes"))
 // Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
