@@ -1,7 +1,10 @@
 import { motion } from "framer-motion";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { useNavigate } from "react-router-dom";
 
 export default function ProductCard({ product, onEdit, onDelete }) {
+  const navigate = useNavigate();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -25,6 +28,23 @@ export default function ProductCard({ product, onEdit, onDelete }) {
           )}
         </p>
         <p className="mt-1 text-lg font-semibold text-green-600">₹{product.price}</p>
+        
+        {/* Sell Button with State */}
+        <button
+          onClick={() =>
+            navigate(`/sell-product/${product._id}`, {
+              state: {
+                id: product._id,
+                name: product.name,
+                stock: product.stock,
+                price: product.price,
+              },
+            })
+          }
+          className="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded-lg mt-2"
+        >
+          Sell
+        </button>
       </div>
 
       {/* Action Buttons */}
