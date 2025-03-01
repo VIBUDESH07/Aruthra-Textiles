@@ -4,7 +4,8 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import NavBar from "./components/Navbar";
 import AuthPage from "./pages/auth/AuthPage";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
-
+import AddUser from "./pages/dashboard/AddUser";
+import Sellproduct from "./pages/dashboard/Sellproduct";
 function App() {
   const [role, setRole] = useState(null);
   const navigate = useNavigate();
@@ -38,6 +39,8 @@ function App() {
       <Routes>
         <Route path="/" element={<AuthPage />} />
         <Route path="/dashboard" element={<AdminDashboard />} />
+        <Route path="/add-user" element={<AddUser />} />
+        <Route path="/sell-product/:id" element={<Sellproduct />} />
       </Routes>
       </>
       
