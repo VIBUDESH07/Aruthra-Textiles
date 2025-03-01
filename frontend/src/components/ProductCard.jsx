@@ -1,35 +1,53 @@
-import { motion } from "framer-motion";
-import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/solid";
+import React from 'react';
 import { useNavigate } from "react-router-dom";
+import { Edit, Trash2, Package, DollarSign, BarChart2, ShoppingCart, AlertTriangle } from 'lucide-react';
 
-export default function ProductCard({ product, onEdit, onDelete }) {
+const ProductCard = ({ product, onEdit, onDelete }) => {
   const navigate = useNavigate();
-
+  const isLowStock = product.stock < 10;
+  
+  // Calculate value
+  const totalValue = (product.stock * product.price).toFixed(2);
+  
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      whileHover={{ scale: 1.03, boxShadow: "0px 10px 15px rgba(0, 0, 0, 0.1)" }}
-      transition={{ duration: 0.3 }}
-      className="bg-white shadow-md rounded-xl p-5 flex flex-col justify-between relative"
-    >
-      {/* Product Name */}
-      <h3 className="text-xl font-bold text-gray-800">{product.name}</h3>
-
-      {/* Stock & Price Section */}
-      <div className="mt-2 text-gray-600">
-        <p>
-          Stock: <span className="font-medium">{product.stock}</span>
-          {product.stock < 10 && (
-            <span className="ml-2 text-sm text-red-600 bg-red-100 px-2 py-1 rounded-full">
-              Low Stock
-            </span>
-          )}
-        </p>
-        <p className="mt-1 text-lg font-semibold text-green-600">₹{product.price}</p>
+    <div className="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg border border-gray-100">
+      <div className="p-5">
+        <div className="flex justify-between items-start">
+          <h3 className="text-xl font-semibold text-gray-800 mb-2 truncate">{product.name}</h3>
+          <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+            ID: {product._id.substring(0, 6)}...
+          </span>
+        </div>
         
-        {/* Sell Button with State */}
+        <div className="space-y-3 mt-4">
+          <div className="flex items-center text-gray-700">
+            <Package size={18} className="mr-2 text-blue-500" />
+            <span className="font-medium">Stock:</span>
+            <div className="ml-2 flex items-center">
+              <span>{product.stock} units</span>
+              {isLowStock && (
+                <div className="ml-2 flex items-center text-red-500 bg-red-50 px-2 py-0.5 rounded-full text-xs">
+                  <AlertTriangle size={12} className="mr-1" />
+                  Low Stock
+                </div>
+              )}
+            </div>
+          </div>
+          
+          <div className="flex items-center text-gray-700">
+            <DollarSign size={18} className="mr-2 text-green-500" />
+            <span className="font-medium">Price:</span>
+            <span className="ml-2">${parseFloat(product.price.toString()).toFixed(2)}</span>
+          </div>
+          
+          <div className="flex items-center text-gray-700">
+            <BarChart2 size={18} className="mr-2 text-purple-500" />
+            <span className="font-medium">Value:</span>
+            <span className="ml-2">{totalValue}</span>
+          </div>
+        </div>
+        
+        {/* Sell Button */}
         <button
           onClick={() =>
             navigate(`/sell-product/${product._id}`, {
@@ -41,29 +59,31 @@ export default function ProductCard({ product, onEdit, onDelete }) {
               },
             })
           }
-          className="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded-lg mt-2"
+          className="mt-4 w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center"
         >
-          Sell
+          <ShoppingCart size={18} className="mr-2" />
+          Sell Product
         </button>
       </div>
-
-      {/* Action Buttons */}
-      <div className="mt-4 flex justify-between">
-        <button
+      
+      <div className="bg-gray-50 px-5 py-3 flex justify-between">
+        <button 
           onClick={() => onEdit(product)}
-          className="flex items-center bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition duration-300"
+          className="flex items-center text-blue-600 hover:text-blue-800 transition-colors"
         >
-          <PencilSquareIcon className="w-5 h-5 mr-2" />
+          <Edit size={16} className="mr-1" />
           Edit
         </button>
-        <button
+        <button 
           onClick={() => onDelete(product._id)}
-          className="flex items-center bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition duration-300"
+          className="flex items-center text-red-600 hover:text-red-800 transition-colors"
         >
-          <TrashIcon className="w-5 h-5 mr-2" />
+          <Trash2 size={16} className="mr-1" />
           Delete
         </button>
       </div>
-    </motion.div>
+    </div>
   );
-}
+};
+
+export default ProductCard;
