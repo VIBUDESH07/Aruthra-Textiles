@@ -71,7 +71,7 @@ export default function SellProduct() {
       if (!res.ok) throw new Error("Failed to process sale");
 
       toast.success("Sale recorded successfully!");
-      navigate("/admin-dashboard"); // Redirect after successful sale
+      navigate("/dashboard"); // Redirect after successful sale
     } catch (error) {
       toast.error("Error processing sale. Please try again.");
     }
