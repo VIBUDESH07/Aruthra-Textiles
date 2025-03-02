@@ -58,7 +58,7 @@ export default function NavBar({ role }) {
           <div className="flex items-center space-x-4">
             <Link to="/dashboard" className="text-blue-600 text-2xl font-bold flex items-center">
               <Package className="mr-2" size={28} />
-              <span>Inventory Pro</span>
+              <span>Aruthra</span>
             </Link>
             
             {/* Desktop Navigation Links */}
