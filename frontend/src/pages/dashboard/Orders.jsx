@@ -32,7 +32,7 @@ export default function Orders() {
     // Add title
     doc.setFontSize(14);
     doc.text("TAX INVOICE", 100, 15, { align: "center" });
-    doc.text("(DUPLICATE FOR TRANSPORTER)", 150, 15, { align: "right" });
+    doc.text("(DUPLICATE FOR TRANSPORTER)", 350, 15, { align: "right" });
     
     // Draw border around the page
     doc.rect(10, 20, 190, 250);
@@ -219,37 +219,32 @@ export default function Orders() {
       }
     });
     
-    // Tax amount in words
     const taxTableY = doc.lastAutoTable.finalY || finalY + 80;
     doc.text("Tax Amount (in words)", 15, taxTableY + 10);
     doc.setFont("helvetica", "bold");
     doc.text(numberToWords(cgstAmount + sgstAmount) + " Only", 15, taxTableY + 15);
     doc.setFont("helvetica", "normal");
     
-    // Company bank details
     doc.text("Company's Bank Details", 135, taxTableY + 10);
     doc.text("A/C Holder Name: ARUTHRA TEXTILE", 135, taxTableY + 15);
     doc.text("Bank Name: KARUR VYSYA BANK", 135, taxTableY + 20);
     doc.text("A/c No: 3217000590037", 135, taxTableY + 25);
     doc.text("Branch & IFS Code: KOMARAPALAYAM & TAMILNADU 0321", 135, taxTableY + 30);
     
-    // Declaration
     doc.setFontSize(6);
     doc.text("Declaration", 15, taxTableY + 40);
     doc.text("(1) Interest will be charged @18% p.a. if payment is not received within 10 days. (2) We are not responsible for any loss", 15, taxTableY + 45);
     doc.text("or damage in transit. (3) Goods once sold cannot be taken back under any circumstances. (4) All dispute subject to", 15, taxTableY + 50);
     doc.text("KOMARAPALAYAM Jurisdiction.", 15, taxTableY + 55);
     
-    // Jurisdiction
     doc.text("SUBJECT TO KOMARAPALAYAM JURISDICTION", 100, taxTableY + 65, { align: "center" });
     doc.text("This is a Computer Generated Invoice", 100, taxTableY + 70, { align: "center" });
     
-    // Signature
     doc.text("for ARUTHRA TEXTILE", 170, taxTableY + 40);
     doc.text("Authorised Signatory", 170, taxTableY + 55);
     
     doc.save(`Invoice_${order.invoiceNumber}.pdf`);
-  };  // Helper function to convert number to words
+  };  
   const numberToWords = (num) => {
     const units = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
     const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
