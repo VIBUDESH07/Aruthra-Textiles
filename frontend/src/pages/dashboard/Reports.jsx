@@ -13,6 +13,7 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
+const backendURL = process.env.REACT_APP_BACKEND_URL;
 
 const Reports = () => {
   const [report, setReport] = useState(null);
@@ -41,7 +42,7 @@ const Reports = () => {
   
   const fetchReport = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/reports/sales", {
+      const res = await axios.get(`${backendURL}/api/reports/sales`, {
         params: {
           from,
           to,
