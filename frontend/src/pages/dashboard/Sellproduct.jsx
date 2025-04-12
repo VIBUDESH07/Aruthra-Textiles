@@ -6,7 +6,10 @@ export default function SellProduct() {
   const location = useLocation();
   const navigate = useNavigate();
   const product = location.state || {};
+  const backendURL = process.env.REACT_APP_BACKEND_URL;
 
+
+  
   // Form State
   const [sellStock, setSellStock] = useState("");
   const [unitPrice, setUnitPrice] = useState("");
@@ -62,7 +65,7 @@ export default function SellProduct() {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/api/sales", {
+      const res = await fetch(`${backendURL}/api/sales`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(saleData),

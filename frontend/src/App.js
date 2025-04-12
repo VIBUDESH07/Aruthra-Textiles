@@ -7,6 +7,7 @@ import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import AddUser from "./pages/dashboard/AddUser";
 import Sellproduct from "./pages/dashboard/Sellproduct";
 import Orders from "./pages/dashboard/Orders";
+import Reports from "./pages/dashboard/Reports";
 function App() {
   const [role, setRole] = useState(null);
   const navigate = useNavigate();
@@ -43,6 +44,7 @@ function App() {
         <Route path="/add-user" element={<AddUser />} />
         <Route path="/sell-product/:id" element={<Sellproduct />} />
         <Route path="/orders" element={<Orders />} />
+        <Route path="/reports" element={<Reports />} />
       </Routes>
       </>
       

@@ -11,7 +11,8 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const API_BASE_URL = "http://localhost:5000"; // Use environment variable
+  const backendURL = process.env.REACT_APP_BACKEND_URL;
+
 
   // Redirect if already logged in
   useEffect(() => {
@@ -31,8 +32,8 @@ export default function AuthPage() {
     }
 
     const endpoint = isSignUp
-      ? `${API_BASE_URL}/api/auth/signup`
-      : `${API_BASE_URL}/api/auth/login`;
+      ? `${backendURL}/api/auth/signup`
+      : `${backendURL}/api/auth/login`;
 
     try {
       const token = localStorage.getItem("token"); // Get token if available

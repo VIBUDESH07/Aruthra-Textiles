@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
-import { 
-  Package, 
-  Plus, 
-  Search, 
-  RefreshCw, 
-  X, 
-  Save, 
+import {
+  Package,
+  Plus,
+  Search,
+  RefreshCw,
+  X,
+  Save,
   ArrowLeft,
   Layers,
   ShoppingBag
 } from "lucide-react";
 import ProductCard from "../../components/ProductCard";
+import { Phone } from "lucide-react";
+
 
 export default function AdminDashboard() {
   const [products, setProducts] = useState([]);
@@ -25,14 +27,17 @@ export default function AdminDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const API_BASE_URL = "http://localhost:5000/api/materials";
+  const backendURL = process.env.REACT_APP_BACKEND_URL;
   const token = localStorage.getItem("token");
 
   let userId = null;
+  let role = null;
   if (token) {
     try {
       const decoded = jwtDecode(token);
       userId = decoded.id;
+      role = decoded.role; // Extract role from token
+      console.log(backendURL);
     } catch (error) {
       console.error("Invalid token", error);
     }
@@ -46,7 +51,7 @@ export default function AdminDashboard() {
     if (searchTerm.trim() === "") {
       setFilteredProducts(products);
     } else {
-      const filtered = products.filter(product => 
+      const filtered = products.filter(product =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredProducts(filtered);
@@ -56,7 +61,7 @@ export default function AdminDashboard() {
   const fetchProducts = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(API_BASE_URL, {
+      const res = await fetch(`${backendURL}/api/materials`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -76,16 +81,16 @@ export default function AdminDashboard() {
       return;
     }
 
-    const product = { 
-      name, 
-      stock: parseInt(stock, 10), 
-      price: parseFloat(price), 
-      createdBy: userId 
+    const product = {
+      name,
+      stock: parseInt(stock, 10),
+      price: parseFloat(price),
+      createdBy: userId
     };
 
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}${editingId ? `/${editingId}` : ""}`, {
+      const res = await fetch(`${backendURL}/api/materials${editingId ? `/${editingId}` : ""}`, {
         method: editingId ? "PUT" : "POST",
         headers: {
           "Content-Type": "application/json",
@@ -109,7 +114,7 @@ export default function AdminDashboard() {
     if (window.confirm("Are you sure you want to delete this product?")) {
       setIsLoading(true);
       try {
-        const res = await fetch(`${API_BASE_URL}/${id}`, {
+        const res = await fetch(`${backendURL}/api/materials/${id}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -148,7 +153,8 @@ export default function AdminDashboard() {
             >
               <RefreshCw className="h-5 w-5" />
             </button>
-            {!showForm && (
+            {/* Show add button only for admin */}
+            {role === "admin" && !showForm && (
               <button
                 onClick={() => setShowForm(true)}
                 className="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300"
@@ -157,13 +163,26 @@ export default function AdminDashboard() {
                 Add Product
               </button>
             )}
+              {role === "user" && (
+          <div className="flex justify-center ">
+            <a
+              href="tel:9994357571"
+              className="flex items-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-lg transition duration-300"
+            >
+              <Phone className="h-5 w-5 mr-2" />
+              Contact: 99943 57571
+            </a>
           </div>
+        )}
+          </div>
+           {/* Contact button for user role */}
+      
         </div>
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Form Section */}
-        {showForm && (
+        {/* Form Section (only visible to admin) */}
+        {role === "admin" && showForm && (
           <div className="bg-white shadow-lg rounded-xl p-6 mb-8 max-w-2xl mx-auto border border-gray-200">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-bold text-gray-800">
@@ -176,23 +195,39 @@ export default function AdminDashboard() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                   Product Name
                 </label>
-                <input
+                <select
                   id="name"
-                  type="text"
-                  placeholder="Enter product name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
                   className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
-                />
+                >
+                  <option value="" disabled>Select a product</option>
+                  <option value="Gold Jani Single White Dhothy - 2.004">Gold Jani Single White Dhothy - 2.004</option>
+                  <option value="Gold Jani Single Cream Dhothy - 2.00">Gold Jani Single Cream Dhothy - 2.00</option>
+                  <option value="Cotton Gold Tissue Single Dhothy 2007">Cotton Gold Tissue Single Dhothy 2007</option>
+                  <option value="Cotton Copper Tissue Single Dhothy - 25.00">Cotton Copper Tissue Single Dhothy - 25.00</option>
+                  <option value="Cotton Sea Green Dhothy Single">Cotton Sea Green Dhothy Single</option>
+                  <option value="Good Jard Double White Dhothy">Good Jard Double White Dhothy</option>
+                  <option value="Gold Dand Double Dhothy">Gold Dand Double Dhothy</option>
+                  <option value="Cream Dhothy">Cream Dhothy</option>
+                  <option value="Sahha Low Single White Dhothy">Sahha Low Single White Dhothy</option>
+                  <option value="Ranaches Single Dhothy Only">Ranaches Single Dhothy Only</option>
+                  <option value="White Heley Single Fancy White Dhothy">White Heley Single Fancy White Dhothy</option>
+                  <option value="Double Roney White Dhothy">Double Roney White Dhothy</option>
+                  <option value="Cotton White Heley Single">Cotton White Heley Single</option>
+                  <option value="Double Cotton White Dhothy">Double Cotton White Dhothy</option>
+                  <option value="Gold Jari White Angavastram">Gold Jari White Angavastram</option>
+                  <option value="Gold Saw Cream Angavastram">Gold Saw Cream Angavastram</option>
+                </select>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="stock" className="block text-sm font-medium text-gray-700 mb-1">
@@ -209,7 +244,7 @@ export default function AdminDashboard() {
                     className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
                   />
                 </div>
-                
+
                 <div>
                   <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
                     Price ($)
@@ -227,7 +262,7 @@ export default function AdminDashboard() {
                   />
                 </div>
               </div>
-              
+
               <div className="flex justify-end space-x-3 pt-2">
                 <button
                   type="button"
@@ -266,7 +301,7 @@ export default function AdminDashboard() {
             />
             <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
           </div>
-          
+
           <div className="flex space-x-4">
             <div className="bg-white rounded-lg shadow-sm p-3 flex items-center">
               <Layers className="h-5 w-5 text-indigo-600 mr-2" />
@@ -275,7 +310,7 @@ export default function AdminDashboard() {
                 <p className="font-bold text-gray-800">{products.length}</p>
               </div>
             </div>
-            
+
             <div className="bg-white rounded-lg shadow-sm p-3 flex items-center">
               <Package className="h-5 w-5 text-green-600 mr-2" />
               <div>
@@ -299,15 +334,21 @@ export default function AdminDashboard() {
               <ProductCard
                 key={product._id}
                 product={product}
-                onEdit={(p) => {
-                  setEditingId(p._id);
-                  setName(p.name);
-                  setStock(p.stock.toString());
-                  setPrice(p.price.toString());
-                  setShowForm(true);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                onDelete={handleDelete}
+                // Only pass onEdit and onDelete if the role is admin
+                onEdit={
+                  role === "admin"
+                    ? (p) => {
+                        setEditingId(p._id);
+                        setName(p.name);
+                        setStock(p.stock.toString());
+                        setPrice(p.price.toString());
+                        setShowForm(true);
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }
+                    : null
+                }
+                onDelete={role === "admin" ? handleDelete : null}
+                role={role}
               />
             ))}
           </div>

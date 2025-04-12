@@ -5,11 +5,13 @@ export default function AddUser() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("user");
+  const backendURL = process.env.REACT_APP_BACKEND_URL;
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:5000/api/users", {
+      const res = await fetch(`${backendURL}/api/users`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, role }),

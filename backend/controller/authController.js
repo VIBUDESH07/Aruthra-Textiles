@@ -4,16 +4,14 @@ const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
 
-// Generate JWT token
 const generateToken = (user) => {
   return jwt.sign(
-    { id: user._id, email: user.email, role: user.role }, // Encrypt id, email, and role
+    { id: user._id, email: user.email, role: user.role }, 
     JWT_SECRET,
     { expiresIn: "1h" }
   );
 };
 
-// User Signup
 exports.signup = async (req, res) => {
   const { email, password, role } = req.body;
 
@@ -24,7 +22,7 @@ exports.signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({ email, password: hashedPassword, role });
 
-    const token = generateToken(user); // Generate JWT after signup
+    const token = generateToken(user); 
 
     res.json({ message: "User created successfully", token, user: { id: user._id, email, role } });
   } catch (error) {
@@ -33,7 +31,6 @@ exports.signup = async (req, res) => {
   }
 };
 
-// User Login
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 

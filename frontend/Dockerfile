@@ -14,6 +14,8 @@ COPY . .
 # Build the Vite app
 RUN npm run build
 
+ARG REACT_APP_BACKEND_URL
+ENV REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL
 # Stage 2: Serve the built app with NGINX
 FROM nginx:1.23 AS production
 

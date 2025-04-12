@@ -3,6 +3,9 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+const backendURL = process.env.REACT_APP_BACKEND_URL;
+
+
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
@@ -14,7 +17,7 @@ export default function Orders() {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/sales/transactions");
+      const res = await fetch(`${backendURL}/api/sales/transactions`);
       if (!res.ok) throw new Error("Failed to fetch orders");
       const data = await res.json();
       setOrders(data);

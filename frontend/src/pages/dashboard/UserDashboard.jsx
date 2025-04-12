@@ -4,7 +4,10 @@ import ProductCard from "../../components/ProductCard";
 export default function UserDashboard() {
   const [products, setProducts] = useState([]);
   
-  const API_BASE_URL = "http://localhost:5000/api/materials";
+  const API_BASE_URL =  process.env.REACT_APP_BACKEND_URL;
+
+  // Example usage with axios
+  
 
   useEffect(() => {
     fetchProducts();
