@@ -209,16 +209,16 @@ export default function AdminDashboard() {
                   className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
                 >
                   <option value="" disabled>Select a product</option>
-                  <option value="Gold Jani Single White Dhothy - 2.004">Gold Jani Single White Dhothy - 2.004</option>
-                  <option value="Gold Jani Single Cream Dhothy - 2.00">Gold Jani Single Cream Dhothy - 2.00</option>
+                  <option value="Gold Jari Single White Dhothy - 2.004">Gold Jani Single White Dhothy - 2.004</option>
+                  <option value="Gold Jari Single Cream Dhothy - 2.00">Gold Jani Single Cream Dhothy - 2.00</option>
                   <option value="Cotton Gold Tissue Single Dhothy 2007">Cotton Gold Tissue Single Dhothy 2007</option>
                   <option value="Cotton Copper Tissue Single Dhothy - 25.00">Cotton Copper Tissue Single Dhothy - 25.00</option>
                   <option value="Cotton Sea Green Dhothy Single">Cotton Sea Green Dhothy Single</option>
-                  <option value="Good Jard Double White Dhothy">Good Jard Double White Dhothy</option>
-                  <option value="Gold Dand Double Dhothy">Gold Dand Double Dhothy</option>
+                  <option value="Gold Jari Double White Dhothy">Good Jard Double White Dhothy</option>
+                  <option value="Gold Jari Double Dhothy">Gold Dand Double Dhothy</option>
                   <option value="Cream Dhothy">Cream Dhothy</option>
                   <option value="Sahha Low Single White Dhothy">Sahha Low Single White Dhothy</option>
-                  <option value="Ranaches Single Dhothy Only">Ranaches Single Dhothy Only</option>
+                  
                   <option value="White Heley Single Fancy White Dhothy">White Heley Single Fancy White Dhothy</option>
                   <option value="Double Roney White Dhothy">Double Roney White Dhothy</option>
                   <option value="Cotton White Heley Single">Cotton White Heley Single</option>

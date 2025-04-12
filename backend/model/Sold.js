@@ -7,6 +7,7 @@ const SoldSchema = new mongoose.Schema({
   unitPrice: Number,
   totalAmount: Number,
   receiverName: String,
+  receiverEmail: String,
   receiverContact: String,
   receiverAddress: String,
   transportMode: String,

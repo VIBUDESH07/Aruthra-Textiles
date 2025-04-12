@@ -5,7 +5,7 @@ const Product = require("../model/Material"); // Import Product model
 // Sell Product (store transaction in DB and update stock)
 const sellProduct = async (req, res) => {
   try {
-    const { productId, productName, sellStock, unitPrice, receiverName, receiverContact, receiverAddress, transportMode, transportCost } = req.body;
+    const { productId, productName, sellStock, unitPrice, receiverName,receiverEmail, receiverContact, receiverAddress, transportMode, transportCost } = req.body;
 
     // Ensure productId is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(productId)) {
@@ -35,6 +35,7 @@ const sellProduct = async (req, res) => {
       unitPrice,
       totalAmount,
       receiverName,
+      receiverEmail,
       receiverContact,
       receiverAddress,
       transportMode,
@@ -64,5 +65,22 @@ const getTransactionHistory = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch transactions." });
   }
 };
+const getTransactionsByReceiverEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
 
-module.exports = { sellProduct, getTransactionHistory };
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+   
+    const transactions = await Sold.find({ "receiverEmail": email }); // Update field based on schema
+
+    res.status(200).json(transactions);
+  } catch (err) {
+    console.error("Error fetching transactions:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+module.exports = { sellProduct, getTransactionHistory,  getTransactionsByReceiverEmail };

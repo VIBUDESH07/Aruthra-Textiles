@@ -20,7 +20,25 @@ const Reports = () => {
   const [to, setTo] = useState("2025-04-12");
   const [productSearch, setProductSearch] = useState("");
   const [customerSearch, setCustomerSearch] = useState("");
-
+  const masterProductList = [
+    "Gold Jari Single White Dhothy - 2.004",
+    "Gold Jari Single Cream Dhothy - 2.00",
+    "Cotton Gold Tissue Single Dhothy 2007",
+    "Cotton Copper Tissue Single Dhothy - 25.00",
+    "Cotton Sea Green Dhothy Single",
+    "Good Jard Double White Dhothy",
+    "Gold Dand Double Dhothy",
+    "Cream Dhothy",
+    "Sahha Low Single White Dhothy",
+    "Ranaches Single Dhothy Only",
+    "White Heley Single Fancy White Dhothy",
+    "Double Roney White Dhothy",
+    "Cotton White Heley Single",
+    "Double Cotton White Dhothy",
+    "Gold Jari White Angavastram",
+    "Gold Saw Cream Angavastram",
+  ];
+  
   const fetchReport = async () => {
     try {
       const res = await axios.get("http://localhost:5000/api/reports/sales", {
@@ -69,14 +87,20 @@ const Reports = () => {
         </div>
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1">Product Name</label>
-          <input
-            type="text"
-            placeholder="Search product..."
+          <select
             value={productSearch}
             onChange={(e) => setProductSearch(e.target.value)}
             className="border px-3 py-2 w-full rounded-md"
-          />
+          >
+            <option value="">All Products</option>
+            {masterProductList.map((product, idx) => (
+              <option key={idx} value={product}>
+                {product}
+              </option>
+            ))}
+          </select>
         </div>
+
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1">Customer Name</label>
           <input

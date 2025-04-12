@@ -3,6 +3,8 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import {jwtDecode }from "jwt-decode";
+
 const backendURL = process.env.REACT_APP_BACKEND_URL;
 
 
@@ -17,15 +19,43 @@ export default function Orders() {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch(`${backendURL}/api/sales/transactions`);
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token not found");
+  
+      const decoded = jwtDecode(token);
+      const userEmail = decoded.email;
+      const userRole = decoded.role;
+  
+      let res;
+  
+      if (userRole === "user") {
+     
+        res = await fetch(`${backendURL}/api/sales/transactions`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ email: userEmail }),
+        });
+      } else {
+      
+        res = await fetch(`${backendURL}/api/sales/transactions`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      }
+  
       if (!res.ok) throw new Error("Failed to fetch orders");
+  
       const data = await res.json();
       setOrders(data);
     } catch (error) {
       toast.error(error.message);
     }
   };
- 
+  
   const generatePDF = (order) => {
     const doc = new jsPDF();
     
