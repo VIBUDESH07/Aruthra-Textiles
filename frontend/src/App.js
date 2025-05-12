@@ -9,13 +9,14 @@ import Sellproduct from "./pages/dashboard/Sellproduct";
 import Orders from "./pages/dashboard/Orders";
 import Reports from "./pages/dashboard/Reports";
 import Products from "./pages/dashboard/Products";
+
 function App() {
   const [role, setRole] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-     
+
     if (token) {
       try {
         const decoded = jwtDecode(token);
@@ -25,7 +26,7 @@ function App() {
           localStorage.removeItem("token");
           navigate("/");
         } else {
-          setRole(decoded.role); 
+          setRole(decoded.role);
         }
       } catch (error) {
         console.error("Invalid token", error);
@@ -38,7 +39,8 @@ function App() {
   }, [navigate]);
 
   return (
-    <><NavBar role={role} /> 
+    <>
+      {role === "admin" && <NavBar role={role} />}
       <Routes>
         <Route path="/" element={<AuthPage />} />
         <Route path="/dashboard" element={<AdminDashboard />} />
@@ -48,8 +50,7 @@ function App() {
         <Route path="/reports" element={<Reports />} />
         <Route path="/products" element={<Products />} />
       </Routes>
-      </>
-      
+    </>
   );
 }
 

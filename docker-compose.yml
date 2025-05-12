@@ -5,27 +5,38 @@ services:
     build: ./backend
     ports:
       - "5001:5000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules  # Prevent host node_modules from overwriting container's
     env_file:
       - .env
     depends_on:
       - database
+    command: nodemon index.js  # Replace with your entry point
 
   frontend:
     build:
       context: ./frontend
-      args:
-        REACT_APP_BACKEND_URL: http://backend:5001
     ports:
-      - "3001:80"
+      - "3001:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules  # Prevent node_modules override
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    command: npm start  # Start dev server (CRA watches file changes)
     depends_on:
       - backend
+    environment:
+      - CHOKIDAR_USEPOLLING=true  # Needed for hot reload in Docker on some OSes
 
   database:
     image: mongo
     container_name: mongo_db
     restart: always
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - mongo_data:/data/db
 
