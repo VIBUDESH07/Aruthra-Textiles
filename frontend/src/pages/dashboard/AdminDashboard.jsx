@@ -12,7 +12,6 @@ import {
   Layers,
   ShoppingBag,
   Phone,
-  Filter,
   ChevronDown,
 } from "lucide-react";
 import ProductCard from "../../components/ProductCard";
@@ -152,6 +151,15 @@ const AdminDashboard = () => {
   const handleClearSearch = () => {
     setSearchTerm("");
     searchInputRef.current?.focus();
+  };
+
+  const handleEdit = (product) => {
+    setEditingId(product._id);
+    setName(product.name);
+    setStock(product.stock.toString());
+    setPrice(product.price.toString());
+    setShowFormModal(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -401,11 +409,14 @@ const AdminDashboard = () => {
             {[...Array(6)].map((_, idx) => (
               <div
                 key={idx}
-                className="bg-white rounded-2xl shadow-lg p-6 animate-pulse"
+                className="bg-white rounded-2xl shadow-lg animate-pulse"
               >
-                <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                <div className="h-48 bg-gray-200 rounded-t-2xl"></div>
+                <div className="p-6">
+                  <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                </div>
               </div>
             ))}
           </div>
@@ -414,27 +425,11 @@ const AdminDashboard = () => {
             {filteredProducts.map((product) => (
               <div
                 key={product._id}
-                className="relative bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                className="transition-all duration-300 transform hover:-translate-y-1"
               >
-                {product.stock < 10 && (
-                  <span className="absolute top-3 right-3 bg-red-100 text-red-600 text-xs font-semibold px-2 py-1 rounded-full">
-                    Low Stock
-                  </span>
-                )}
                 <ProductCard
                   product={product}
-                  onEdit={
-                    role === "admin"
-                      ? (p) => {
-                          setEditingId(p._id);
-                          setName(p.name);
-                          setStock(p.stock.toString());
-                          setPrice(p.price.toString());
-                          setShowFormModal(true);
-                          window.scrollTo({ top: 0, behavior: "smooth" });
-                        }
-                      : null
-                  }
+                  onEdit={role === "admin" ? handleEdit : null}
                   onDelete={role === "admin" ? handleDelete : null}
                   role={role}
                 />
