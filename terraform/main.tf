@@ -101,7 +101,7 @@ resource "aws_iam_role_policy_attachment" "ecs_instance_role_policy" {
 }
 
 resource "aws_iam_instance_profile" "ecs_instance_profile" {
-  name = "ecsInstanceProfile_v2"
+  name = "ecs-instance-profile-nw2"
   role = aws_iam_role.ecs_instance_role.name
 }
 
@@ -169,141 +169,20 @@ resource "aws_autoscaling_group" "backend_asg" {
   }
 }
 
-# Backend ALB
-resource "aws_lb" "backend_alb" {
-  name               = "aruthra-backend-alb"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.backend_alb_sg.id]
-  subnets            = data.aws_subnets.default.ids
-}
+# Capacity Provider
+resource "aws_ecs_capacity_provider" "ecs_cp" {
+  name = "my-capacity-provider-n23"
 
-# Backend Target Group
-resource "aws_lb_target_group" "backend_tg" {
-  name     = "aruthra-backend-tg"
-  port     = 5000
-  protocol = "HTTP"
-  vpc_id   = data.aws_vpc.default.id
+  auto_scaling_group_provider {
+    auto_scaling_group_arn         = aws_autoscaling_group.ecs.arn
+    managed_termination_protection = "DISABLED"
 
-  health_check {
-    path                = "/health"
-    interval            = 30
-    timeout             = 5
-    healthy_threshold   = 3
-    unhealthy_threshold = 3
-    matcher             = "200-399"
-  }
-}
-
-# Backend ALB Listener
-resource "aws_lb_listener" "backend_http" {
-  load_balancer_arn = aws_lb.backend_alb.arn
-  port              = 80
-  protocol          = "HTTP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.backend_tg.arn
-  }
-}
-
-# Backend Task Definition
-resource "aws_ecs_task_definition" "backend_task" {
-  family                   = "aruthra-backend-task"
-  network_mode             = "bridge"
-  requires_compatibilities = ["EC2"]
-  cpu                      = "256"
-  memory                   = "512"
-
-  container_definitions = jsonencode([
-    {
-      name      = "backend"
-      image     = "307946674949.dkr.ecr.us-east-1.amazonaws.com/full_stack:backend"
-      essential = true
-      portMappings = [{
-        containerPort = 5000
-        hostPort      = 5000
-      }]
-      environment = [
-        {
-          name  = "JWT_SECRET"
-          value = "86ba1631901f7ffb7f6734ebb0ed715fdd4aa14233f383d8297a8760b16a950dbee06ef283fcae256f099a41c21ff350de0447dd56f49902aa61417d523"
-        },
-        {
-          name  = "MONGO_URI"
-          value = "mongodb+srv://sivadeep:sivadeep@cluster0.2q6ww.mongodb.net/Aaruthra?retryWrites=true&w=majority"
-        }
-      ]
+    managed_scaling {
+      maximum_scaling_step_size = 2
+      minimum_scaling_step_size = 1
+      status                     = "ENABLED"
+      target_capacity            = 100
     }
-  ])
-}
-
-# Backend ECS Service
-resource "aws_ecs_service" "backend_service" {
-  name            = "aruthra-backend-service"
-  cluster         = aws_ecs_cluster.backend_cluster.id
-  task_definition = aws_ecs_task_definition.backend_task.arn
-  desired_count   = 1
-  launch_type     = "EC2"
-
-  load_balancer {
-    target_group_arn = aws_lb_target_group.backend_tg.arn
-    container_name   = "backend"
-    container_port   = 5000
-  }
-
-  deployment_minimum_healthy_percent = 50
-  deployment_maximum_percent         = 200
-
-  depends_on = [aws_lb_listener.backend_http]
-}
-
-output "backend_alb_dns" {
-  description = "DNS name of the backend ALB"
-  value       = aws_lb.backend_alb.dns_name
-}
-
-# === FRONTEND ===
-
-# Frontend SG for ALB (allow HTTP 80)
-resource "aws_security_group" "frontend_alb_sg" {
-  name        = "frontend_alb_sg"
-  description = "Allow HTTP inbound to frontend ALB"
-  vpc_id      = data.aws_vpc.default.id
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-# Frontend SG for ECS instances (allow port 3000 from frontend ALB only)
-resource "aws_security_group" "frontend_ecs_sg" {
-  name        = "frontend_ecs_sg"
-  description = "Allow traffic from frontend ALB"
-  vpc_id      = data.aws_vpc.default.id
-
-  ingress {
-    from_port       = 80
-    to_port         = 80
-    protocol        = "tcp"
-    security_groups = [aws_security_group.frontend_alb_sg.id]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
