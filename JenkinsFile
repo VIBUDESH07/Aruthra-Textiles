@@ -1,0 +1,84 @@
+pipeline {
+    agent any
+
+    environment {
+        AWS_REGION = 'us-east-1'
+        ECR_REPO_FRONTEND = '307946674949.dkr.ecr.us-east-1.amazonaws.com/full_stack-frontend'
+        ECR_REPO_BACKEND  = '307946674949.dkr.ecr.us-east-1.amazonaws.com/full_stack-backend'
+        TF_DIR = './terraform'
+    }
+
+    parameters {
+        string(name: 'BRANCH', defaultValue: 'main', description: 'Git branch to build')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: params.BRANCH, url: 'https://github.com/VIBUDESH07/Aruthra-Textiles.git'
+            }
+        }
+
+        stage('Login to ECR') {
+            steps {
+                script {
+                    sh '''
+                        aws --version
+                        aws ecr get-login-password --region $AWS_REGION \
+                        | docker login --username AWS --password-stdin 307946674949.dkr.ecr.us-east-1.amazonaws.com
+                    '''
+                }
+            }
+        }
+
+        stage('Build with Docker Compose') {
+            steps {
+                sh 'docker-compose build'
+            }
+        }
+
+        stage('Tag Docker Images') {
+            steps {
+                script {
+                    sh """
+                        docker tag frontend ${ECR_REPO_FRONTEND}:latest
+                        docker tag backend ${ECR_REPO_BACKEND}:latest
+                    """
+                }
+            }
+        }
+
+        stage('Push to ECR') {
+            steps {
+                script {
+                    sh """
+                        docker push ${ECR_REPO_FRONTEND}:latest
+                        docker push ${ECR_REPO_BACKEND}:latest
+                    """
+                }
+            }
+        }
+
+        stage('Terraform Init & Apply') {
+            steps {
+                dir("${TF_DIR}") {
+                    script {
+                        sh '''
+                            terraform init
+                            terraform apply -auto-approve
+                        '''
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        failure {
+            echo "❌ Build or Deployment failed!"
+        }
+        success {
+            echo "✅ Both images built, pushed, and deployed successfully!"
+        }
+    }
+}
