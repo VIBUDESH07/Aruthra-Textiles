@@ -15,17 +15,6 @@ export default function NavBar({ role }) {
     setIsAuthenticated(!!token);
   }, []);
 
-  // Close menus when clicking outside
-  useEffect(() => {
-    const handleClickOutside = () => {
-      setIsProfileMenuOpen(false);
-      setIsNotificationsOpen(false);
-    };
-    
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
-
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
@@ -47,11 +36,11 @@ export default function NavBar({ role }) {
   const notifications = [
     { id: 1, text: "New order received", time: "5 minutes ago" },
     { id: 2, text: "Low stock alert: Product XYZ", time: "1 hour ago" },
-    { id: 3, text: "System update completed", time: "Yesterday" }
+    { id: 3, text: "System update completed", time: "Yesterday" },
   ];
 
   return (
-    <nav className="bg-white shadow-md border-b border-gray-200">
+    <nav className="bg-white shadow-md border-b border-gray-200 fixed top-0 left-0 w-full z-50">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           {/* Logo / Brand */}
@@ -60,7 +49,7 @@ export default function NavBar({ role }) {
               <Package className="mr-2" size={28} />
               <span>Aruthra</span>
             </Link>
-            
+
             {/* Desktop Navigation Links */}
             <div className="hidden md:flex space-x-6 ml-10">
               <Link to="/dashboard" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
@@ -82,7 +71,7 @@ export default function NavBar({ role }) {
           <div className="flex items-center space-x-4">
             {/* Notifications */}
             <div className="relative">
-              <button 
+              <button
                 onClick={toggleNotifications}
                 className="relative p-2 text-gray-600 hover:text-blue-600 transition-colors"
               >
@@ -91,7 +80,7 @@ export default function NavBar({ role }) {
                   {notifications.length}
                 </span>
               </button>
-              
+
               {/* Notifications Dropdown */}
               {isNotificationsOpen && (
                 <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 z-50 border border-gray-200">
@@ -99,7 +88,7 @@ export default function NavBar({ role }) {
                     <h3 className="font-semibold text-gray-800">Notifications</h3>
                   </div>
                   <div className="max-h-96 overflow-y-auto">
-                    {notifications.map(notification => (
+                    {notifications.map((notification) => (
                       <div key={notification.id} className="px-4 py-3 hover:bg-gray-50 border-b border-gray-100">
                         <p className="text-sm text-gray-800">{notification.text}</p>
                         <p className="text-xs text-gray-500 mt-1">{notification.time}</p>
@@ -114,11 +103,11 @@ export default function NavBar({ role }) {
                 </div>
               )}
             </div>
-            
+
             {/* User Profile */}
             {isAuthenticated && (
               <div className="relative">
-                <button 
+                <button
                   onClick={toggleProfileMenu}
                   className="flex items-center space-x-2 focus:outline-none"
                 >
@@ -127,7 +116,7 @@ export default function NavBar({ role }) {
                   </div>
                   <span className="hidden md:block font-medium text-gray-700">Admin User</span>
                 </button>
-                
+
                 {/* Profile Dropdown */}
                 {isProfileMenuOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50 border border-gray-200">
@@ -144,7 +133,7 @@ export default function NavBar({ role }) {
                       <span>Help</span>
                     </Link>
                     <div className="border-t border-gray-100 my-1"></div>
-                    <button 
+                    <button
                       onClick={handleLogout}
                       className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-50 flex items-center"
                     >
@@ -155,22 +144,25 @@ export default function NavBar({ role }) {
                 )}
               </div>
             )}
-            
+
             {/* Conditionally Show "Add User" */}
             {role === "admin" && (
-              <Link to="/add-user" className="hidden md:flex bg-blue-600 text-white px-4 py-2 rounded-lg items-center space-x-2 hover:bg-blue-700 transition-colors">
+              <Link
+                to="/add-user"
+                className="hidden md:flex bg-blue-600 text-white px-4 py-2 rounded-lg items-center space-x-2 hover:bg-blue-700 transition-colors"
+              >
                 <UserPlus size={18} />
                 <span>Add User</span>
               </Link>
             )}
-            
+
             {/* Show Login Button if not authenticated */}
             {!isAuthenticated && (
               <Link to="/login" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
                 Login
               </Link>
             )}
-            
+
             {/* Mobile Menu Button */}
             <button
               className="md:hidden text-gray-700 focus:outline-none"
@@ -180,7 +172,7 @@ export default function NavBar({ role }) {
             </button>
           </div>
         </div>
-        
+
         {/* Mobile Menu */}
         {isOpen && (
           <div className="md:hidden mt-4 pb-4 border-t border-gray-200 pt-4 space-y-3">
@@ -196,14 +188,17 @@ export default function NavBar({ role }) {
             <Link to="/reports" className="block py-2 px-4 text-gray-700 hover:bg-gray-50 rounded-lg">
               Reports
             </Link>
-            
+
             {role === "admin" && (
-              <Link to="/add-user" className="block py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center">
+              <Link
+                to="/add-user"
+                className="block py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
+              >
                 <UserPlus size={18} className="mr-2" />
                 <span>Add User</span>
               </Link>
             )}
-            
+
             {isAuthenticated && (
               <button
                 onClick={handleLogout}
